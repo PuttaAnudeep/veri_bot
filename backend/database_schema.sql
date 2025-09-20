@@ -31,15 +31,21 @@ CREATE TABLE search_type (
 
 CREATE TABLE order_request (
     order_id INT PRIMARY KEY,
-    order_packageId NVARCHAR(40),
-    order_SubjectID INT,
-    order_CompanyCode NVARCHAR(20),
-    Order_status VARCHAR(20),
-    Order_packcageCode INT
+    order_package_id NVARCHAR(40),
+    order_subject_id INT,
+    order_company_code NVARCHAR(20),
+    order_status VARCHAR(20),
+    order_packcage_code INT,
+    order_date VARCHAR(50),
+    estimated_completion VARCHAR(50),
+    actual_completion VARCHAR(50),
+    days_elapsed INT,
+    is_overdue BOOLEAN,
+    priority_level VARCHAR(20)
 );
 
 CREATE TABLE search (
-    searchId INT PRIMARY KEY,
+    search_id INT PRIMARY KEY,
     package_req_id NVARCHAR(20),
     subject_id INT,
     search_type_code NVARCHAR(20),
@@ -63,8 +69,8 @@ CREATE TABLE order_status (
 -- Key Relationships (based on your schema):
 -- Search.subject_id -> Subject.subject_id
 -- Search.search_type_code -> Search_Type.search_type_code
--- Search.search_status -> Search_status.Status_code
--- Order_Request.order_SubjectID -> Subject.subject_id
--- Order_Request.Order_status -> Order_status.Status_code
--- Order_Request.order_CompanyCode -> Company.comp_code
+-- Search.search_status -> Search_status.status_code
+-- Order_Request.order_subject_id -> Subject.subject_id
+-- Order_Request.order_status -> Order_status.status_code
+-- Order_Request.order_company_code -> Company.comp_code
 -- Package.comp_code -> Company.comp_code

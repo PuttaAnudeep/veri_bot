@@ -1,0 +1,344 @@
+{
+  "chart_types": {
+    "bar": {
+      "name": "Bar Chart",
+      "description": "Compare categories and values",
+      "icon": "📊",
+      "data_requirements": {
+        "min_columns": 2,
+        "max_columns": 3,
+        "column_types": ["categorical", "numerical"],
+        "optimal_data_points": {"min": 2, "max": 50}
+      },
+      "use_cases": [
+        "Comparing quantities across categories",
+        "Showing rankings or top N items",
+        "Displaying counts by category",
+        "Revenue by product/region comparisons"
+      ],
+      "plotly_config": {
+        "chart_type": "bar",
+        "x_axis": "categorical_column",
+        "y_axis": "numerical_column",
+        "color": "optional_categorical_column",
+        "orientation": "v"
+      },
+      "sample_data_structure": {
+        "x": ["Category A", "Category B", "Category C"],
+        "y": [10, 15, 12],
+        "type": "bar"
+      },
+      "best_for": ["categorical_vs_numerical", "comparisons", "rankings"]
+    },
+    "line": {
+      "name": "Line Chart",
+      "description": "Show trends over time",
+      "icon": "📈",
+      "data_requirements": {
+        "min_columns": 2,
+        "max_columns": 4,
+        "column_types": ["datetime/sequential", "numerical"],
+        "optimal_data_points": {"min": 3, "max": 1000}
+      },
+      "use_cases": [
+        "Time series analysis",
+        "Trend visualization",
+        "Performance over time",
+        "Sequential data patterns"
+      ],
+      "plotly_config": {
+        "chart_type": "scatter",
+        "mode": "lines+markers",
+        "x_axis": "datetime_column",
+        "y_axis": "numerical_column"
+      },
+      "sample_data_structure": {
+        "x": ["2023-01", "2023-02", "2023-03"],
+        "y": [100, 110, 105],
+        "type": "scatter",
+        "mode": "lines+markers"
+      },
+      "best_for": ["time_series", "trends", "sequential_data"]
+    },
+    "pie": {
+      "name": "Pie Chart",
+      "description": "Display proportional data",
+      "icon": "🥧",
+      "data_requirements": {
+        "min_columns": 2,
+        "max_columns": 2,
+        "column_types": ["categorical", "numerical"],
+        "optimal_data_points": {"min": 2, "max": 10}
+      },
+      "use_cases": [
+        "Part-to-whole relationships",
+        "Market share visualization",
+        "Budget allocation",
+        "Status distribution"
+      ],
+      "plotly_config": {
+        "chart_type": "pie",
+        "labels": "categorical_column",
+        "values": "numerical_column"
+      },
+      "sample_data_structure": {
+        "labels": ["A", "B", "C"],
+        "values": [30, 40, 30],
+        "type": "pie"
+      },
+      "best_for": ["proportional_data", "part_to_whole", "percentages"]
+    },
+    "scatter": {
+      "name": "Scatter Plot",
+      "description": "Show relationships between variables",
+      "icon": "⚬",
+      "data_requirements": {
+        "min_columns": 2,
+        "max_columns": 4,
+        "column_types": ["numerical", "numerical"],
+        "optimal_data_points": {"min": 10, "max": 1000}
+      },
+      "use_cases": [
+        "Correlation analysis",
+        "Relationship detection",
+        "Outlier identification",
+        "Clustering visualization"
+      ],
+      "plotly_config": {
+        "chart_type": "scatter",
+        "mode": "markers",
+        "x_axis": "numerical_column_1",
+        "y_axis": "numerical_column_2",
+        "color": "optional_categorical_column",
+        "size": "optional_numerical_column"
+      },
+      "sample_data_structure": {
+        "x": [1, 2, 3, 4, 5],
+        "y": [10, 11, 12, 13, 14],
+        "mode": "markers",
+        "type": "scatter"
+      },
+      "best_for": ["correlation", "relationships", "clustering"]
+    },
+    "heatmap": {
+      "name": "Heatmap",
+      "description": "Visualize data density and correlations",
+      "icon": "🔥",
+      "data_requirements": {
+        "min_columns": 3,
+        "max_columns": 3,
+        "column_types": ["categorical", "categorical", "numerical"],
+        "optimal_data_points": {"min": 9, "max": 10000}
+      },
+      "use_cases": [
+        "Correlation matrices",
+        "Geographic data visualization",
+        "Cross-tabulation analysis",
+        "Pattern recognition in 2D data"
+      ],
+      "plotly_config": {
+        "chart_type": "heatmap",
+        "x_axis": "categorical_column_1",
+        "y_axis": "categorical_column_2",
+        "z_axis": "numerical_column",
+        "colorscale": "Viridis"
+      },
+      "sample_data_structure": {
+        "z": [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+        "type": "heatmap",
+        "colorscale": "Viridis"
+      },
+      "best_for": ["correlations", "patterns", "density_maps"]
+    },
+    "histogram": {
+      "name": "Histogram",
+      "description": "Show data distribution",
+      "icon": "📋",
+      "data_requirements": {
+        "min_columns": 1,
+        "max_columns": 2,
+        "column_types": ["numerical"],
+        "optimal_data_points": {"min": 20, "max": 10000}
+      },
+      "use_cases": [
+        "Data distribution analysis",
+        "Frequency analysis",
+        "Statistical summaries",
+        "Outlier detection"
+      ],
+      "plotly_config": {
+        "chart_type": "histogram",
+        "x_axis": "numerical_column",
+        "nbins": "auto"
+      },
+      "sample_data_structure": {
+        "x": [1, 2, 2, 3, 3, 3, 4, 4, 5],
+        "type": "histogram"
+      },
+      "best_for": ["distribution", "frequency", "statistical_analysis"]
+    },
+    "box": {
+      "name": "Box Plot",
+      "description": "Display statistical summaries",
+      "icon": "📦",
+      "data_requirements": {
+        "min_columns": 1,
+        "max_columns": 2,
+        "column_types": ["numerical", "optional_categorical"],
+        "optimal_data_points": {"min": 10, "max": 1000}
+      },
+      "use_cases": [
+        "Statistical distribution summary",
+        "Outlier detection",
+        "Quartile analysis",
+        "Group comparisons"
+      ],
+      "plotly_config": {
+        "chart_type": "box",
+        "y_axis": "numerical_column",
+        "x_axis": "optional_categorical_column"
+      },
+      "sample_data_structure": {
+        "y": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "type": "box",
+        "name": "Data Distribution"
+      },
+      "best_for": ["statistical_summary", "outliers", "quartiles"]
+    },
+    "gauge": {
+      "name": "Gauge Chart",
+      "description": "Show single metric progress",
+      "icon": "🎯",
+      "data_requirements": {
+        "min_columns": 1,
+        "max_columns": 1,
+        "column_types": ["numerical"],
+        "optimal_data_points": {"min": 1, "max": 1}
+      },
+      "use_cases": [
+        "KPI visualization",
+        "Progress tracking",
+        "Target achievement",
+        "Performance metrics"
+      ],
+      "plotly_config": {
+        "chart_type": "indicator",
+        "mode": "gauge+number",
+        "value": "numerical_value",
+        "gauge": {
+          "axis": {"range": [0, 100]},
+          "bar": {"color": "darkblue"},
+          "steps": [
+            {"range": [0, 50], "color": "lightgray"},
+            {"range": [50, 100], "color": "gray"}
+          ],
+          "threshold": {
+            "line": {"color": "red", "width": 4},
+            "thickness": 0.75,
+            "value": 90
+          }
+        }
+      },
+      "sample_data_structure": {
+        "type": "indicator",
+        "mode": "gauge+number",
+        "value": 75,
+        "title": {"text": "Performance"}
+      },
+      "best_for": ["single_metric", "kpi", "progress", "performance"]
+    },
+    "table": {
+      "name": "Data Table",
+      "description": "Display structured data",
+      "icon": "📋",
+      "data_requirements": {
+        "min_columns": 1,
+        "max_columns": 20,
+        "column_types": ["any"],
+        "optimal_data_points": {"min": 1, "max": 100}
+      },
+      "use_cases": [
+        "Raw data display",
+        "Detailed information presentation",
+        "Multiple column comparison",
+        "Data exploration"
+      ],
+      "plotly_config": {
+        "chart_type": "table",
+        "header": "column_names",
+        "cells": "data_values"
+      },
+      "sample_data_structure": {
+        "type": "table",
+        "header": {
+          "values": ["Column 1", "Column 2", "Column 3"],
+          "align": "left"
+        },
+        "cells": {
+          "values": [["A", "B", "C"], [1, 2, 3], ["X", "Y", "Z"]],
+          "align": "left"
+        }
+      },
+      "best_for": ["raw_data", "detailed_view", "multiple_columns"]
+    },
+    "sunburst": {
+      "name": "Sunburst Chart",
+      "description": "Show hierarchical data",
+      "icon": "☀️",
+      "data_requirements": {
+        "min_columns": 2,
+        "max_columns": 4,
+        "column_types": ["hierarchical_categorical", "numerical"],
+        "optimal_data_points": {"min": 5, "max": 100}
+      },
+      "use_cases": [
+        "Hierarchical data visualization",
+        "Multi-level categorization",
+        "Organizational structures",
+        "Nested proportions"
+      ],
+      "plotly_config": {
+        "chart_type": "sunburst",
+        "labels": "hierarchical_labels",
+        "parents": "parent_labels",
+        "values": "numerical_values"
+      },
+      "sample_data_structure": {
+        "type": "sunburst",
+        "labels": ["Root", "A", "B", "A1", "A2", "B1"],
+        "parents": ["", "Root", "Root", "A", "A", "B"],
+        "values": [100, 50, 50, 25, 25, 50]
+      },
+      "best_for": ["hierarchical", "nested_categories", "tree_structure"]
+    }
+  },
+  "selection_criteria": {
+    "data_type_based": {
+      "single_numerical": ["gauge", "histogram", "box"],
+      "categorical_numerical": ["bar", "pie"],
+      "time_series": ["line"],
+      "two_numerical": ["scatter"],
+      "hierarchical": ["sunburst"],
+      "correlation_matrix": ["heatmap"],
+      "detailed_data": ["table"]
+    },
+    "data_size_based": {
+      "small": {"max_rows": 20, "preferred": ["table", "pie", "bar"]},
+      "medium": {"max_rows": 100, "preferred": ["bar", "line", "scatter", "box"]},
+      "large": {"max_rows": 1000, "preferred": ["histogram", "heatmap", "scatter"]}
+    },
+    "question_intent_based": {
+      "comparison": ["bar", "box"],
+      "trend": ["line"],
+      "distribution": ["histogram", "box", "pie"],
+      "correlation": ["scatter", "heatmap"],
+      "overview": ["table"],
+      "progress": ["gauge"],
+      "hierarchy": ["sunburst"]
+    }
+  },
+  "chart_selection_prompts": {
+    "analysis_prompt": "Based on the data structure and user query, suggest the most appropriate chart type from the available options. Consider: 1) Data types and structure 2) Number of data points 3) User intent 4) Visualization best practices",
+    "transformation_prompt": "Generate Python pandas code to transform the given DataFrame into the exact format required for the suggested chart type. The code should handle data cleaning, aggregation, and formatting as needed."
+  }
+}
