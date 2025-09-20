@@ -68,8 +68,9 @@ class SQLRetrieval:
             explanation = self._generate_explanation(data_results, question, sql_query)
             
             # Step 5: Return formatted response
+            res=self._format_response(question, sql_query, data_results, visualization, explanation)
+            print(res)
             return self._format_response(question, sql_query, data_results, visualization, explanation)
-            
         except Exception as e:
             print(f"❌ Error in SQL processing: {e}")
             return self._error_response(f"SQL processing failed: {str(e)}")
@@ -88,7 +89,7 @@ class SQLRetrieval:
         # Create detailed prompt with schema and business context
         prompt = f"""
 You are a SQL expert working with a Background Check System database.  
-Your task is to translate user questions written in natural language into **valid PostgreSQL SQL queries with columns in smallcase only**.
+Your task is to translate user questions written in natural language into **valid PostgreSQL SQL queries with columns name in smallcase only**.
 === DATABASE SCHEMA ===
 {self.schema}
 
@@ -100,36 +101,104 @@ The database contains these main tables:
 1. **Subject**
    - Holds candidate (person) details.
    - Key columns: subject_id, subject_name, subject_alias, subject_contact, subject_address
-
+    sample values in this table are:
+        subject_id,subject_name,subject_alias,subject_contact,subject_address1,subject_address2,sbj_city
+        4832213,Maximillian Cains,,7639898647,18 Kahuaina Place,,Cromwell
+        5058939,Sandi Stimer,,6318854424,603 Contees St.,,Salem
+        5095445,Natividad Tito,,,14 Dews St.,,Marlin
+        5208968,Jane Acerno,,5121986942,91 Puerto Rd.,,Vicksburg
+        5252901,Fedele Willock,,2079349344,567 Corkins Rd.,#411,Carrollton
+   
 2. **Company**
    - Stores company information that requests background checks.
    - Key columns: comp_id, comp_name, comp_code
+    sample values in this table are:
+        comp_id,comp_name,comp_code
+        8763,"Abbvie, Inc.",ABVIE
+        6600,Activision International,ACTIT
+        10030,AIDS Healthcare Foundation,AHF
+        5082,Alliance Healthcare Services,AHS
 
 3. **Package**
    - Defines background check packages offered to companies.
    - Key columns: package_code, package_name, package_price, comp_code (links to Company)
+    sample values in this table are:
+        package_code,package_name,package_price,comp_code
+        41,GEO Group Package Three,46.69,GEO
+        2227,General Package,18.15,AMZTA
+        2318,Retail Associates,21.14,ROSS
+        3056,Medical Verification Package,45.7,AMAZT
+        3870,Salary Package,38.9,ROCKT
+        3872,Hourly Package,16.64,ROCKT
 
 4. **Search_Type**
    - Stores the types of result after background checks (criminal, employment, education, etc.).
    - Key columns: search_type_code, search_type_name
-
+    sample values in this table are:
+        search_type_code,search_type,search_type_category
+        9PK,CUSTOMIZED PACKAGE,PKG
+        ADJ,ADJUDICATION,G
+        CBSV,CONSENT-BASED SOCIAL SECURITY NUMBER VERIFICATION,G
+        CRTU,CREDIT REPORT- TRANS UNION,G
+        D10,10 PANEL LAB DRUG TEST,G
+        D10A,10 PANEL + ADULTERANT,G
+        DH5,HAIR 5 PANEL DRUG TEST,G
 5. **Search**
    - Represents individual background checks conducted for subjects.
    - Key columns: search_id, package_req_id, subject_id, search_type_code, search_status
-
+    sample values in this table are:
+        search_id,package_req_id,subject_id,search_type_code,search_status,county_name,state_code,pkg_code,sub_status
+        25692215,Y4716269,4832213,MVR,R,NONE,IN,5923,
+        27123290,Y4934241,5058939,EMP,R,NONE,,5805,Discrepancy Found
+        27368764,Y4969373,5095445,ADJ,R,NONE,,41,
+        28112714,Y5079200,5208968,SON,N,NONE,,2227,
+        28112715,Y5079200,5208968,OFAC,N,NONE,,2227,
+        28112716,Y5079200,5208968,ADJ,R,NONE,,2227,
+        28112718,Y5079200,5208968,NCRIM,R,NONE,,2227,
+        28416276,Y5121814,5252901,ADJ,R,NONE,,7194,
+        29022564,Y5207165,5340770,EMP,R,NONE,,5367,Developed Information
 6. **Order_Request**
    - Represents orders placed by companies for background checks on subjects.
-   - Key columns: order_id, order_PackageId, order_SubjectID, order_CompanyCode, Order_Status
-
+   - Key columns: order_id, order_Package_id, order_Subject_id, order_company_code, order_status
+    sample values in this table are:
+        order_id,order_package_id,order_subject_id,order_company_code,order_status,order_packcage_code,order_date,estimated_completion,actual_completion,days_elapsed,is_overdue,priority_level
+        1040815,Y4716269,4832213,NEST,P,5923,20:47.4,20:47.4,,79,TRUE,Standard
+        1258599,Y4934241,5058939,TFS,P,5805,20:47.4,20:47.4,,57,TRUE,Standard
+        1293667,Y4969373,5095445,GEO,P,41,20:47.4,20:47.4,,19,TRUE,Standard
+        1403444,Y5079200,5208968,AMZTA,P,2227,20:47.4,20:47.4,,49,TRUE,Standard
+        1446058,Y5121814,5252901,ACTIT,D,7194,20:47.4,20:47.4,20:47.4,60,FALSE,Rush
+        1531402,Y5207165,5340770,TREM,P,5367,20:47.4,20:47.4,,118,TRUE,Urgent
+        3574933,Y7251702,7419549,AMZSF,P,2227,20:47.4,20:47.4,,89,TRUE,Standard
+        3588649,Y7265424,7433399,TMOB,D,12069,20:47.4,20:47.4,20:47.4,43,FALSE,Standard
+        3713223,Y7390015,7559643,AMZSF,P,2227,20:47.4,20:47.4,,9,TRUE,Urgent
 7. **Search_status**
    - Lookup table for different search statuses.
-   - Key columns: Status_code, Status (e.g., Pending, Completed, Failed)
+   - Key columns: status_code, status (e.g., Pending, Completed, Failed)
+    sample values in this table are:
+        status_code,status
+        C,CANCELLED
+        D,DRAFT
+        F,RECORD FOUND
+        N,NO RECORD FOUND
+        P,PENDING
+        P11,Awaiting County Search
+        P13,QUALITY
+        P14,AWAITING ACTION
+        P4,RELEASE NEEDED
+        P5,OTHER INFORMATION NEEDED
+        R,RECORD FOUND
+        P6,PENDING - TYPE 6
+        P7,PENDING - TYPE 7
+        P8,PENDING - TYPE 8
+        R2,RECORD FOUND - TYPE 2
 
 8. **Order_status**
    - Lookup table for different order statuses.
-   - Key columns: Status_code, Status (e.g.,CANCELLED,DRAFT,RECORD FOUND,NO RECORD FOUND,PENDING,
-Awaiting County Search,QUALITY,AWAITING ACTION,RELEASE NEEDED,OTHER INFORMATION NEEDED,RECORD FOUND,
-PENDING - TYPE 6,PENDING - TYPE 7,PENDING - TYPE 8,RECORD FOUND - TYPE 2)
+   - Key columns: Status_code, Status 
+    sample values in this table are:
+        status_code,status_description
+        P,PENDING
+        D,COMPLETED
 
 
 =====================================================================
@@ -383,17 +452,16 @@ Guidelines:
 
 Explanation:
 """
-        
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                max_tokens=300
+            chat = self.client.start_chat(history=[])
+            response = chat.send_message(
+            prompt,
+            generation_config={
+                "temperature": 0.3,
+                "max_output_tokens": 300
+            }
             )
-            
-            return response.choices[0].message.content.strip()
-            
+            return response.text.strip()
         except Exception as e:
             print(f"Error generating explanation: {e}")
             # Fallback explanation
@@ -481,6 +549,21 @@ def handle_sql_question(question: str) -> Dict:
     sql_retriever = SQLRetrieval()
     return sql_retriever.process_sql_question(question)
 
+def generate_sql_query(question: str) -> str:
+    """
+    Standalone function to generate SQL query from natural language question
+    
+    This function is used by processuserquery.py to generate SQL queries
+    
+    Args:
+        question (str): Natural language question
+        
+    Returns:
+        str: Generated SQL query or None if failed
+    """
+    sql_retriever = SQLRetrieval()
+    return sql_retriever._generate_sql_query(question)
+
 # ========================================================================================
 # TESTING FUNCTIONS
 # ========================================================================================
@@ -496,13 +579,14 @@ def test_sql_retrieval():
         #"Show me the breakdown of searches by status",
         #"show me record found searches?",
         #"Show me overdue of urgent order?"
-        #"What are the top 5 most expensive packages?",
+        "What are the top 5 most expensive packages?",
         #"How many orders does each company have?",
-        "Show me all search types available",
+        #"Show me all search types available",
         #"Which subjects have the most searches?",
         #"What are the different order statuses?",
         #"Show me recent searches with subject names"
         #"How many orders are pending?"
+        #"summarize last years order"
     ]
     
     for i, question in enumerate(test_questions, 1):
@@ -511,10 +595,27 @@ def test_sql_retrieval():
         try:
             result = handle_sql_question(question)
             
-            if result["success"]:
-                print(f"   ✅ Success: {result['data']['row_count']} rows")
-                print(f"   📝 SQL: {result['sql_query'][:80]}...")
-                print(f"   💡 Explanation: {result['explanation'][:100]}...")
+            if result.get("success"):
+                print("\n" + "="*60)
+                print(f"📋 QUESTION: {result['question']}")
+                print(f"📝 SQL QUERY: {result['sql_query']}")
+                print("="*60)
+                
+                # Display the data table
+                data_records = result['data']['records']
+                if data_records:
+                    df = pd.DataFrame(data_records)
+                    print("📊 QUERY RESULTS:")
+                    print(df.to_string(index=False))
+                    print(f"\n📈 Total rows: {len(df)}")
+                    print(data_records)
+                else:
+                    print("📊 No data returned")
+                
+                # Display explanation
+                print(f"\n💡 EXPLANATION:")
+                print(result['explanation'])
+                print("="*60)
             else:
                 print(f"   ❌ Error: {result['error']}")
                 
