@@ -161,16 +161,16 @@ The database contains these main tables:
    - Represents orders placed by companies for background checks on subjects.
    - Key columns: order_id, order_Package_id, order_Subject_id, order_company_code, order_status
     sample values in this table are:
-        order_id,order_package_id,order_subject_id,order_company_code,order_status,order_packcage_code,order_date,estimated_completion,actual_completion,days_elapsed,is_overdue,priority_level
-        1040815,Y4716269,4832213,NEST,P,5923,20:47.4,20:47.4,,79,TRUE,Standard
-        1258599,Y4934241,5058939,TFS,P,5805,20:47.4,20:47.4,,57,TRUE,Standard
-        1293667,Y4969373,5095445,GEO,P,41,20:47.4,20:47.4,,19,TRUE,Standard
-        1403444,Y5079200,5208968,AMZTA,P,2227,20:47.4,20:47.4,,49,TRUE,Standard
-        1446058,Y5121814,5252901,ACTIT,D,7194,20:47.4,20:47.4,20:47.4,60,FALSE,Rush
-        1531402,Y5207165,5340770,TREM,P,5367,20:47.4,20:47.4,,118,TRUE,Urgent
-        3574933,Y7251702,7419549,AMZSF,P,2227,20:47.4,20:47.4,,89,TRUE,Standard
-        3588649,Y7265424,7433399,TMOB,D,12069,20:47.4,20:47.4,20:47.4,43,FALSE,Standard
-        3713223,Y7390015,7559643,AMZSF,P,2227,20:47.4,20:47.4,,9,TRUE,Urgent
+        order_id,order_package_id,order_subject_id,order_company_code,order_status,order_packcage_code
+        1040815,Y4716269,4832213,NEST,P,5923
+        1258599,Y4934241,5058939,TFS,P,5805
+        1293667,Y4969373,5095445,GEO,P,41
+        1403444,Y5079200,5208968,AMZTA,P,2227
+        1446058,Y5121814,5252901,ACTIT,D,7194
+        1531402,Y5207165,5340770,TREM,P,5367
+        3574933,Y7251702,7419549,AMZSF,P,2227
+        3588649,Y7265424,7433399,TMOB,D,12069
+        3713223,Y7390015,7559643,AMZSF,P,2227
 7. **Search_status**
    - Lookup table for different search statuses.
    - Key columns: status_code, status (e.g., Pending, Completed, Failed)

@@ -36,12 +36,6 @@ CREATE TABLE order_request (
     order_company_code NVARCHAR(20),
     order_status VARCHAR(20),
     order_packcage_code INT,
-    order_date VARCHAR(50),
-    estimated_completion VARCHAR(50),
-    actual_completion VARCHAR(50),
-    days_elapsed INT,
-    is_overdue BOOLEAN,
-    priority_level VARCHAR(20)
 );
 
 CREATE TABLE search (
