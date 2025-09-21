@@ -1,0 +1,38 @@
+Unnamed: 0,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8
+,Entity,Purpose,,,Entiry,Field,Data Type (Size),Description
+,Subject,Candidate Information,,,Subject,subject_id,Int (4),Candidate Unique Identity Number (PK)
+,Company,Employer Company Information,,,Subject,subject_name,nvarchar(100),Candidate Name
+,Package,Background Verification Package Details ,,,Subject,subject_alias,nvarchar(50),Candidate Alias Name
+,Order_Request,Candidate Background Verification Order Details,,,Subject,subject_contact,varchar(40),Candidate Contact Number
+,Search,Background Verification Order - Component Details,,,Subject,subject_address1,nvarchar(200),Candidate Address Line 1
+,Search_Status,Order/Component Status Codes and Description,,,Subject,subject_address2,nvarchar(200),Candidate Address Line 2
+,,,,,Subject,sbj_city,nvarchar(100),Candidate City
+,,,,,Company,comp_id,Int (4),Employer Company Unique ID (PK)
+,,,,,Company,comp_name,nvarchar(200),Company Name
+,,,,,Company,comp_code,nvarchar(20),Company Short Code
+,,,,,Package,package_code,Int (4),Background Verification Package Unique ID
+,,,,,Package,package_name,varchar(150),Package Name
+,,,,,Package,package_price,money(8),Package Cost
+,,,,,Package,comp_code,nvarchar(20),Package linked to Company Short Code (Fk - Company.comp_code)
+,,,,,Search_Type,search_type_code,nvarchar(20),Background Verification Component Type short code
+,,,,,Search_Type,search_type,varchar(50),Background Verification Component Type Description
+,,,,,Search_Type,search_type_category,varchar(50),Background Verification Component Grouping 
+,,,,,Order_Request,order_id,Int (4),Background Verification Order Unique ID (PK)
+,,,,,Order_Request,order_packageId,nvarchar(40),Order ID
+,,I ,,,Order_Request,order_SubjectID,Int (4),Order Linked to Candidate ID (fk)
+,,,,,Order_Request,order_CompanyCode,nvarchar(20),Order Linked to Company Short Code (fk - Compnay.comp_code)
+,,,,,Order_Request,Order_status,varchar(20),Order Status linked to Search_Status Code (fk - Search_Status.status_code)
+,,,,,Order_Request,Order_packcageCode,int(4),Order linked To Package Code (fk - Package.Package_code)
+,,,,,Search,SearchId,int(4),Background Verification Component for Candidate - Unique ID
+,,,,,Search,package_req_id,nvarchar(20),Order ID (fk - Order_Request.Order_packageID)
+,,,,,Search,subject_id,int(4),Candidate Unique ID (fk - Subject.subject_id)
+,,,,,Search,search_type_code,nvarchar(20),Background Verification Component Type short code (fk - Search_Type)
+,,,,,Search,search_status,nvarchar(12),Background Verification Component Status code (fk - Search_Status)
+,,,,,Search,county_name,nvarchar(50),County Name for the background verification
+,,,,,Search,state_code,nvarchar(5),State Code for the background verification
+,,,,,Search,pkg_code,int(4),Package Code associated with this background verification component
+,,,,,Search,sub_status,nvarchar(200),Sub Status of the Background verification Component once status is completed
+,,,,,Search_status,Status_code,nvarchar(12),Background Verificaiton Order or Component Status Short Code 
+,,,,,Search_status,Status,nvarchar(100),Background Verificaiton Order or Component Status
+,,,,,Order_status,Status_code,nvarchar(12),Order Status Short Code 
+,,,,,Order_status,Status_description,nvarchar(100),Order Status description

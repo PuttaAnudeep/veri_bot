@@ -110,7 +110,7 @@ async def get_available_charts():
     try:
         config_file = Path(__file__).parent / "chart_config.json"
         if config_file.exists():
-            with open(config_file, 'r') as f:
+            with open(config_file, 'r', encoding='utf-8') as f:
                 chart_config = json.load(f)
             
             # Extract just the basic info for frontend display
@@ -181,7 +181,7 @@ async def get_database_schema():
     try:
         schema_file = Path(__file__).parent / "database_schema.sql"
         if schema_file.exists():
-            with open(schema_file, 'r') as f:
+            with open(schema_file, 'r', encoding='utf-8') as f:
                 schema_content = f.read()
             
             return {

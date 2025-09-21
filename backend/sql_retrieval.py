@@ -21,7 +21,7 @@ class SQLRetrieval:
         # Load the exact database schema
         schema_file = os.path.join(os.path.dirname(__file__), 'database_schema.sql')
         try:
-            with open(schema_file, 'r') as f:
+            with open(schema_file, 'r', encoding='utf-8') as f:
                 self.schema = f.read()
         except FileNotFoundError:
             print(f"Warning: Schema file not found at {schema_file}")

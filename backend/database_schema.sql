@@ -35,7 +35,7 @@ CREATE TABLE order_request (
     order_subject_id INT,
     order_company_code NVARCHAR(20),
     order_status VARCHAR(20),
-    order_packcage_code INT,
+    order_packcage_code INT
 );
 
 CREATE TABLE search (

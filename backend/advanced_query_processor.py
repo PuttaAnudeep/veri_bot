@@ -2,7 +2,7 @@ import os
 import json
 import pandas as pd
 import google.generativeai as genai
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from typing import Dict, Optional, List, Tuple, Any
 import traceback
@@ -82,7 +82,7 @@ class AdvancedQueryProcessor:
         # Load database schema
         schema_file = os.path.join(os.path.dirname(__file__), 'database_schema.sql')
         try:
-            with open(schema_file, 'r') as f:
+            with open(schema_file, 'r', encoding='utf-8') as f:
                 self.schema = f.read()
         except FileNotFoundError:
             print(f"Warning: Schema file not found at {schema_file}")
@@ -91,7 +91,7 @@ class AdvancedQueryProcessor:
         # Load chart configurations
         config_file = os.path.join(os.path.dirname(__file__), 'chart_config.json')
         try:
-            with open(config_file, 'r') as f:
+            with open(config_file, 'r', encoding='utf-8') as f:
                 self.chart_config = json.load(f)
         except FileNotFoundError:
             print(f"Warning: Chart config file not found at {config_file}")
@@ -137,8 +137,10 @@ class AdvancedQueryProcessor:
             
             # Step 2: Execute SQL and create DataFrame
             df = self._execute_sql_query(sql_query)
-            if df is None or df.empty:
-                return self._error_response("No data returned from query")
+            if df is None:
+                return self._error_response(f"SQL execution failed for query: {sql_query}")
+            elif df.empty:
+                return self._error_response(f"No data returned from query - this could mean the tables are empty or the query conditions don't match any records. SQL: {sql_query}")
             print(f"📊 Retrieved DataFrame with shape: {df.shape}")
             
             # Step 3: Suggest visualization type using LLM
@@ -451,8 +453,10 @@ SQL Query:
         return sql_query
     
     def _execute_sql_query(self, sql_query: str) -> Optional[pd.DataFrame]:
-        """Execute SQL query with safety checks"""
+        """Execute SQL query with safety checks and detailed error handling"""
         try:
+            print(f"🔍 Executing SQL query: {sql_query}")
+            
             # Safety checks
             sql_lower = sql_query.lower().strip()
             dangerous_operations = [
@@ -463,11 +467,55 @@ SQL Query:
             if any(op in sql_lower for op in dangerous_operations):
                 raise ValueError("Potentially dangerous SQL operation detected")
             
-            df = pd.read_sql(sql_query, self.engine)
-            return df
+            # Test database connection first
+            with self.engine.connect() as conn:
+                print("✅ Database connection established")
+                
+                # Execute query and get DataFrame
+                df = pd.read_sql(sql_query, self.engine)
+                print(f"📊 Query executed successfully, retrieved {len(df)} rows")
+                
+                if df.empty:
+                    print("⚠️  Query returned no data - this might be expected if tables are empty")
+                    # Let's try to verify tables exist and have data
+                    try:
+                        tables_info = conn.execute(text("""
+                            SELECT table_name, 
+                                   (SELECT COUNT(*) FROM information_schema.columns 
+                                    WHERE table_name = t.table_name AND table_schema = 'public') as column_count
+                            FROM information_schema.tables t
+                            WHERE table_schema = 'public'
+                            ORDER BY table_name
+                        """))
+                        tables = tables_info.fetchall()
+                        print(f"📋 Available tables: {[(table[0], table[1]) for table in tables]}")
+                        
+                        # Check if tables have data
+                        for table_name, col_count in tables:
+                            try:
+                                count_result = conn.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
+                                row_count = count_result.scalar()
+                                print(f"   📊 {table_name}: {row_count} rows, {col_count} columns")
+                            except Exception as table_error:
+                                print(f"   ❌ Error checking {table_name}: {table_error}")
+                                
+                    except Exception as info_error:
+                        print(f"⚠️  Could not get table info: {info_error}")
+                
+                return df
             
         except Exception as e:
-            print(f"SQL execution error: {e}")
+            print(f"❌ SQL execution error: {e}")
+            print(f"   Query was: {sql_query}")
+            
+            # Try to provide more specific error information
+            if "relation" in str(e).lower() and "does not exist" in str(e).lower():
+                print("   💡 Hint: This error usually means a table doesn't exist in the database")
+            elif "column" in str(e).lower() and "does not exist" in str(e).lower():
+                print("   💡 Hint: This error usually means a column name is incorrect")
+            elif "syntax error" in str(e).lower():
+                print("   💡 Hint: There's a SQL syntax error in the generated query")
+            
             return None
     
     @llm_retry_with_rate_limit(max_retries=3, base_delay=3.0)
